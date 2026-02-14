@@ -75,6 +75,7 @@ model Cafe {
   description     String?
   logo            String?
   instagram       String?
+  telegramChatId  String?
   thankYouMessage String?
   ownerId         String   @unique
   owner           User     @relation(fields: [ownerId], references: [id])

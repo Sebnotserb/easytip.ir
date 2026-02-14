@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { verifyPayment } from "@/lib/payment";
+import { sendTipNotification } from "@/lib/telegram";
 
 /**
  * GET /api/payments/verify
@@ -115,6 +116,23 @@ export async function GET(request: Request) {
         ipAddress: transaction.tip.ipAddress,
       },
     });
+
+    // ── Telegram notification (non-blocking) ──
+    const cafe = await prisma.cafe.findUnique({
+      where: { id: transaction.tip.cafeId },
+      select: { name: true, telegramChatId: true },
+    });
+
+    if (cafe?.telegramChatId) {
+      // Fire and forget — don't await, don't block the redirect
+      sendTipNotification(cafe.telegramChatId, {
+        cafeName: cafe.name,
+        amount: transaction.tip.amount,
+        rating: transaction.tip.rating,
+        comment: transaction.tip.comment,
+        nickname: transaction.tip.nickname,
+      }).catch(() => {});
+    }
 
     return NextResponse.redirect(
       `${appUrl}/thank-you?status=success&amount=${transaction.tip.totalPaid}`

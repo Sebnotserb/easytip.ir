@@ -9,6 +9,7 @@ export default function SettingsPage() {
     description: "",
     thankYouMessage: "",
     instagram: "",
+    telegramChatId: "",
   });
   const [slug, setSlug] = useState("");
   const [logo, setLogo] = useState<string | null>(null);
@@ -31,6 +32,7 @@ export default function SettingsPage() {
             description: cafe.description || "",
             thankYouMessage: cafe.thankYouMessage || "",
             instagram: cafe.instagram || "",
+            telegramChatId: cafe.telegramChatId || "",
           });
           setSlug(cafe.slug || "");
           if (cafe.logo) {
@@ -107,7 +109,12 @@ export default function SettingsPage() {
       const res = await fetch(`/api/cafes/${slug}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, logo, instagram: form.instagram || null }),
+        body: JSON.stringify({
+          ...form,
+          logo,
+          instagram: form.instagram || null,
+          telegramChatId: form.telegramChatId || null,
+        }),
       });
 
       if (!res.ok) {
@@ -274,6 +281,43 @@ export default function SettingsPage() {
             </div>
             <p className="text-xs text-gray-400 mt-1">
               نام کاربری اینستاگرام — در صفحه انعام به مشتریان نمایش داده می‌شود
+            </p>
+          </div>
+
+          {/* ── Telegram Notification ── */}
+          <div>
+            <label className="block text-sm font-bold mb-2">
+              اعلان تلگرام
+            </label>
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-[#229ED9] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+              </svg>
+              <input
+                type="text"
+                value={form.telegramChatId}
+                onChange={(e) =>
+                  setForm({ ...form, telegramChatId: e.target.value.trim() })
+                }
+                maxLength={20}
+                className="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-primary transition-all"
+                placeholder="شناسه چت تلگرام"
+                dir="ltr"
+              />
+            </div>
+            <p className="text-xs text-gray-400 mt-1.5 leading-relaxed">
+              با فعال‌سازی، هر بار که مشتری انعام بده بهتون از تلگرام اطلاع می‌دیم.
+              <br />
+              برای دریافت شناسه، ربات{" "}
+              <a
+                href="https://t.me/userinfobot"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary font-bold hover:underline"
+              >
+                @userinfobot
+              </a>
+              {" "}رو در تلگرام باز کنید و دکمه Start رو بزنید. عددی که نشون می‌ده رو اینجا وارد کنید.
             </p>
           </div>
 

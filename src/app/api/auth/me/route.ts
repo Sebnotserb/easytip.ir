@@ -36,6 +36,7 @@ export async function GET() {
             description: user.cafe.description,
             logo: user.cafe.logo,
             instagram: user.cafe.instagram,
+            telegramChatId: user.cafe.telegramChatId,
             thankYouMessage: user.cafe.thankYouMessage,
             walletBalance: user.cafe.walletBalance,
             isActive: user.cafe.isActive,

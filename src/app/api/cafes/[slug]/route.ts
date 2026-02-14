@@ -56,7 +56,7 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const { name, description, thankYouMessage, logo, instagram } = body;
+  const { name, description, thankYouMessage, logo, instagram, telegramChatId } = body;
 
   const updated = await prisma.cafe.update({
     where: { id: cafe.id },
@@ -72,6 +72,9 @@ export async function PUT(
       ...(instagram !== undefined && {
         instagram: instagram?.trim().replace(/^@/, "").substring(0, 100) || null,
       }),
+      ...(telegramChatId !== undefined && {
+        telegramChatId: telegramChatId?.trim() || null,
+      }),
     },
   });
 
@@ -83,6 +86,7 @@ export async function PUT(
       thankYouMessage: updated.thankYouMessage,
       logo: updated.logo,
       instagram: updated.instagram,
+      telegramChatId: updated.telegramChatId,
     },
   });
 }
