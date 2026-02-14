@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <radialGradient id="ig1" cx="19.38" cy="42.04" r="44.90" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FD5"/>
+      <stop offset=".1" stop-color="#FD5"/>
+      <stop offset=".5" stop-color="#FF543E"/>
+      <stop offset="1" stop-color="#C837AB"/>
+    </radialGradient>
+    <radialGradient id="ig2" cx="11.79" cy="-2.90" r="65.02" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3771C8"/>
+      <stop offset=".13" stop-color="#3771C8"/>
+      <stop offset="1" stop-color="#6600FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="2" y="2" width="44" height="44" rx="14" fill="url(#ig1)"/>
+  <rect x="2" y="2" width="44" height="44" rx="14" fill="url(#ig2)"/>
+  <circle cx="24" cy="24" r="9" stroke="white" stroke-width="3" fill="none"/>
+  <circle cx="35" cy="13" r="2.2" fill="white"/>
+  <rect x="8" y="8" width="32" height="32" rx="10" stroke="white" stroke-width="3" fill="none"/>
+</svg>

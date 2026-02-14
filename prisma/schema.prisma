@@ -1,0 +1,215 @@
+// =================================
+// MyTip Database Schema
+// QR-based Digital Tipping Platform
+// =================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────
+
+enum Role {
+  CAFE_OWNER
+  ADMIN
+}
+
+enum TipStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum TransactionType {
+  TIP_PAYMENT
+  PAYOUT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  REJECTED
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
+// ─── Models ──────────────────────────────────────
+
+/// Café owners and admin users
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  phone     String?  @unique
+  password  String
+  name      String
+  role      Role     @default(CAFE_OWNER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cafe    Cafe?
+  tickets Ticket[]
+}
+
+/// Registered cafés/restaurants
+model Cafe {
+  id              String   @id @default(uuid())
+  name            String
+  slug            String   @unique
+  description     String?
+  logo            String?
+  instagram       String?
+  thankYouMessage String?
+  ownerId         String   @unique
+  owner           User     @relation(fields: [ownerId], references: [id])
+  walletBalance   Int      @default(0) // in Toman
+  totalTips       Int      @default(0) // cumulative in Toman
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tips    Tip[]
+  payouts Payout[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+/// Individual tip records from customers
+model Tip {
+  id         String    @id @default(uuid())
+  amount     Int // tip amount in Toman (goes to café)
+  commission Int // 5% platform fee in Toman
+  totalPaid  Int // amount + commission (customer pays this)
+  rating     Int? // 1-5 star rating
+  comment    String?
+  nickname   String?
+  cafeId     String
+  cafe       Cafe      @relation(fields: [cafeId], references: [id])
+  status     TipStatus @default(PENDING)
+  ipAddress  String?
+  userAgent  String?
+  paymentRef String? // reference from payment gateway
+  createdAt  DateTime  @default(now())
+
+  transaction Transaction?
+
+  @@index([cafeId, status])
+  @@index([cafeId, createdAt])
+  @@index([status])
+}
+
+/// Payment transaction records
+model Transaction {
+  id        String            @id @default(uuid())
+  amount    Int
+  type      TransactionType
+  status    TransactionStatus @default(PENDING)
+  reference String? // payment gateway reference ID
+  authority String? // Zarinpal authority code
+  tipId     String?           @unique
+  tip       Tip?              @relation(fields: [tipId], references: [id])
+  payoutId  String?           @unique
+  payout    Payout?           @relation(fields: [payoutId], references: [id])
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([authority])
+  @@index([tipId])
+}
+
+/// Withdrawal/payout requests from café owners
+model Payout {
+  id        String       @id @default(uuid())
+  amount    Int // requested amount
+  fee       Int          @default(0) // 10% if < 500,000
+  netAmount Int // amount - fee
+  cafeId    String
+  cafe      Cafe         @relation(fields: [cafeId], references: [id])
+  status    PayoutStatus @default(PENDING)
+  bankInfo  String? // IBAN or card number
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  transaction Transaction?
+
+  @@index([cafeId, status])
+  @@index([status])
+}
+
+/// Support tickets
+model Ticket {
+  id        String       @id @default(uuid())
+  subject   String
+  message   String
+  status    TicketStatus @default(OPEN)
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  cafeId    String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  replies TicketReply[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// Replies to support tickets
+model TicketReply {
+  id        String   @id @default(uuid())
+  message   String
+  isAdmin   Boolean  @default(false)
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  userId    String?
+  createdAt DateTime @default(now())
+
+  @@index([ticketId])
+}
+
+/// Password reset tokens
+model PasswordReset {
+  id        String   @id @default(uuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([email])
+}
+
+/// Audit trail for security monitoring
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String
+  entity    String
+  entityId  String
+  data      Json?
+  ipAddress String?
+  userId    String?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([action])
+  @@index([createdAt])
+}
