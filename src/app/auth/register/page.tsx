@@ -3,9 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/lib/i18n";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t, locale, dir } = useI18n();
+  const isEn = locale === "en";
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -27,12 +30,12 @@ export default function RegisterPage() {
 
     // Client-side validation
     if (form.phone && !/^09\d{9}$/.test(form.phone.trim())) {
-      setError("شماره موبایل باید ۱۱ رقم و با ۰۹ شروع بشه");
+      setError(t("register.errorPhone"));
       return;
     }
 
     if (form.password.length < 6) {
-      setError("رمز عبور حداقل ۶ کاراکتر باشه");
+      setError(t("register.errorPassword"));
       return;
     }
 
@@ -48,30 +51,34 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "مشکلی پیش اومد — لطفاً دوباره امتحان کنید");
+        setError(data.error || t("register.errorDefault"));
         return;
       }
 
       router.push("/dashboard");
       router.refresh();
     } catch {
-      setError("اتصال برقرار نشد — لطفاً اینترنت‌تون رو چک کنید");
+      setError(t("register.errorNetwork"));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-secondary to-white flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gradient-to-b from-secondary to-white flex items-center justify-center p-4" dir={dir}>
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
             <h1 className="text-4xl font-extrabold text-dark mb-2">
-              مای‌<span className="text-primary">تیپ</span>
+              {isEn ? (
+                <>Easy<span className="text-primary">Tip</span></>
+              ) : (
+                <>ایزی‌<span className="text-primary">تیپ</span></>
+              )}
             </h1>
           </Link>
-          <p className="text-muted text-sm">در کمتر از ۲ دقیقه حسابتون رو بسازید</p>
+          <p className="text-muted text-sm">{t("register.subtitle")}</p>
         </div>
 
         {/* Form */}
@@ -86,11 +93,11 @@ export default function RegisterPage() {
           )}
 
           {/* Step hint */}
-          <p className="text-xs text-muted mb-4 font-bold">اطلاعات شخصی</p>
+          <p className="text-xs text-muted mb-4 font-bold">{t("register.personalInfo")}</p>
 
           <div className="mb-4">
             <label className="block text-sm font-bold text-dark mb-2">
-              نام و نام‌خانوادگی
+              {t("register.name")}
             </label>
             <input
               type="text"
@@ -99,7 +106,7 @@ export default function RegisterPage() {
               onChange={handleChange}
               required
               className="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-primary transition-all"
-              placeholder="مثلاً: علی محمدی"
+              placeholder={t("register.namePlaceholder")}
               autoComplete="name"
             />
           </div>
@@ -107,7 +114,7 @@ export default function RegisterPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-bold text-dark mb-2">
-                ایمیل
+                {t("register.email")}
               </label>
               <input
                 type="email"
@@ -123,8 +130,8 @@ export default function RegisterPage() {
             </div>
             <div>
               <label className="block text-sm font-bold text-dark mb-2">
-                موبایل
-                <span className="text-muted font-normal text-xs mr-1">(اختیاری)</span>
+                {t("register.phone")}
+                <span className={`text-muted font-normal text-xs ${isEn ? "ml-1" : "mr-1"}`}>{t("register.phoneOptional")}</span>
               </label>
               <input
                 type="tel"
@@ -132,7 +139,7 @@ export default function RegisterPage() {
                 value={form.phone}
                 onChange={handleChange}
                 className="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-primary transition-all"
-                placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                placeholder={t("register.phonePlaceholder")}
                 dir="ltr"
                 autoComplete="tel"
                 maxLength={11}
@@ -142,7 +149,7 @@ export default function RegisterPage() {
 
           <div className="mb-5">
             <label className="block text-sm font-bold text-dark mb-2">
-              رمز عبور
+              {t("register.password")}
             </label>
             <input
               type="password"
@@ -152,18 +159,18 @@ export default function RegisterPage() {
               required
               minLength={6}
               className="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-primary transition-all"
-              placeholder="حداقل ۶ کاراکتر"
+              placeholder={t("register.passwordPlaceholder")}
               dir="ltr"
               autoComplete="new-password"
             />
           </div>
 
           {/* Step hint */}
-          <p className="text-xs text-muted mb-4 font-bold border-t border-gray-100 pt-4">اطلاعات کافه</p>
+          <p className="text-xs text-muted mb-4 font-bold border-t border-gray-100 pt-4">{t("register.cafeInfo")}</p>
 
           <div className="mb-6">
             <label className="block text-sm font-bold text-dark mb-2">
-              نام کافه / رستوران
+              {t("register.cafeName")}
             </label>
             <input
               type="text"
@@ -172,7 +179,7 @@ export default function RegisterPage() {
               onChange={handleChange}
               required
               className="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-primary transition-all"
-              placeholder="مثلاً: کافه لمیز"
+              placeholder={t("register.cafeNamePlaceholder")}
             />
           </div>
 
@@ -181,16 +188,16 @@ export default function RegisterPage() {
             disabled={loading}
             className="w-full py-3.5 bg-cta text-white rounded-xl font-bold text-lg hover:bg-cta-hover transition-all disabled:bg-gray-300 disabled:cursor-not-allowed btn-press shadow-sm"
           >
-            {loading ? "در حال ثبت‌نام..." : "ساخت حساب رایگان"}
+            {loading ? t("register.loading") : t("register.submit")}
           </button>
 
           <p className="text-center text-sm text-muted mt-6">
-            قبلاً ثبت‌نام کردید؟{" "}
+            {t("register.hasAccount")}{" "}
             <Link
               href="/auth/login"
               className="text-cta font-bold hover:underline"
             >
-              ورود
+              {t("register.login")}
             </Link>
           </p>
         </form>

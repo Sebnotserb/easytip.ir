@@ -3,10 +3,13 @@
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n";
 
 function ResetPasswordForm() {
   const params = useSearchParams();
   const token = params.get("token");
+  const { t, locale, dir } = useI18n();
+  const isEn = locale === "en";
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,17 +19,17 @@ function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="text-center">
+      <div className="text-center" dir={dir}>
         <div className="text-6xl mb-6">⚠️</div>
-        <h1 className="text-2xl font-bold text-dark mb-4">لینک نامعتبر</h1>
+        <h1 className="text-2xl font-bold text-dark mb-4">{t("reset.invalidTitle")}</h1>
         <p className="text-gray-500 mb-6">
-          لینک بازیابی رمز عبور نامعتبر یا منقضی شده است.
+          {t("reset.invalidDesc")}
         </p>
         <Link
           href="/auth/forgot-password"
           className="text-primary font-bold hover:underline"
         >
-          درخواست لینک جدید
+          {t("reset.newLink")}
         </Link>
       </div>
     );
@@ -34,19 +37,19 @@ function ResetPasswordForm() {
 
   if (success) {
     return (
-      <div className="text-center">
+      <div className="text-center" dir={dir}>
         <div className="text-6xl mb-6">✅</div>
         <h1 className="text-2xl font-bold text-dark mb-4">
-          رمز عبور تغییر کرد
+          {t("reset.successTitle")}
         </h1>
         <p className="text-gray-500 mb-6">
-          رمز عبور شما با موفقیت تغییر کرد. اکنون می‌توانید وارد شوید.
+          {t("reset.successDesc")}
         </p>
         <Link
           href="/auth/login"
           className="inline-block bg-cta text-white px-8 py-3 rounded-2xl font-bold hover:bg-green-600 transition-all"
         >
-          ورود به حساب
+          {t("reset.loginButton")}
         </Link>
       </div>
     );
@@ -57,12 +60,12 @@ function ResetPasswordForm() {
     setError("");
 
     if (password.length < 6) {
-      setError("رمز عبور باید حداقل ۶ کاراکتر باشد");
+      setError(isEn ? "Password must be at least 6 characters" : "رمز عبور باید حداقل ۶ کاراکتر باشد");
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("رمز عبور و تکرار آن یکسان نیستند");
+      setError(isEn ? "Passwords do not match" : "رمز عبور و تکرار آن یکسان نیستند");
       return;
     }
 
@@ -84,19 +87,21 @@ function ResetPasswordForm() {
 
       setSuccess(true);
     } catch {
-      setError("خطا در اتصال به سرور");
+      setError(isEn ? "Connection error" : "خطا در اتصال به سرور");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-md" dir={dir}>
       <div className="text-center mb-8">
         <Link href="/" className="inline-block">
-          <h1 className="text-4xl font-bold text-primary mb-2">ایزی‌تیپ</h1>
+          <h1 className="text-4xl font-bold text-primary mb-2">
+            {isEn ? "EasyTip" : "ایزی‌تیپ"}
+          </h1>
         </Link>
-        <p className="text-gray-500">تنظیم رمز عبور جدید</p>
+        <p className="text-gray-500">{t("reset.subtitle")}</p>
       </div>
 
       <form
@@ -111,7 +116,7 @@ function ResetPasswordForm() {
 
         <div className="mb-4">
           <label className="block text-sm font-bold text-dark mb-2">
-            رمز عبور جدید
+            {t("reset.newPassword")}
           </label>
           <input
             type="password"
@@ -120,7 +125,7 @@ function ResetPasswordForm() {
             required
             minLength={6}
             className="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-primary transition-all"
-            placeholder="حداقل ۶ کاراکتر"
+            placeholder={isEn ? "At least 6 characters" : "حداقل ۶ کاراکتر"}
             dir="ltr"
             autoComplete="new-password"
           />
@@ -128,7 +133,7 @@ function ResetPasswordForm() {
 
         <div className="mb-6">
           <label className="block text-sm font-bold text-dark mb-2">
-            تکرار رمز عبور
+            {t("reset.confirmPassword")}
           </label>
           <input
             type="password"
@@ -147,7 +152,7 @@ function ResetPasswordForm() {
           disabled={loading}
           className="w-full py-3 bg-cta text-white rounded-xl font-bold text-lg hover:bg-green-600 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
-          {loading ? "در حال ذخیره..." : "ذخیره رمز عبور جدید"}
+          {loading ? t("reset.loading") : t("reset.submit")}
         </button>
       </form>
     </div>

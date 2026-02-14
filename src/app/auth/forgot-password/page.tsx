@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n";
 
 export default function ForgotPasswordPage() {
+  const { t, locale, dir } = useI18n();
+  const isEn = locale === "en";
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -38,21 +41,20 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-secondary to-white flex items-center justify-center p-4">
+      <main className="min-h-screen bg-gradient-to-b from-secondary to-white flex items-center justify-center p-4" dir={dir}>
         <div className="w-full max-w-md text-center">
           <div className="text-6xl mb-6">📧</div>
           <h1 className="text-2xl font-bold text-dark mb-4">
-            ایمیل بازیابی ارسال شد
+            {t("forgot.sentTitle")}
           </h1>
           <p className="text-gray-500 mb-8 leading-relaxed">
-            اگر ایمیل شما در سیستم ثبت باشد، لینک بازیابی رمز عبور
-            به آن ارسال خواهد شد.
+            {t("forgot.sentDesc")}
           </p>
           <Link
             href="/auth/login"
             className="text-primary font-bold hover:underline"
           >
-            بازگشت به صفحه ورود
+            {t("forgot.backToLogin")}
           </Link>
         </div>
       </main>
@@ -60,13 +62,15 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-secondary to-white flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gradient-to-b from-secondary to-white flex items-center justify-center p-4" dir={dir}>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <h1 className="text-4xl font-bold text-primary mb-2">ایزی‌تیپ</h1>
+            <h1 className="text-4xl font-bold text-primary mb-2">
+              {isEn ? "EasyTip" : "ایزی‌تیپ"}
+            </h1>
           </Link>
-          <p className="text-gray-500">بازیابی رمز عبور</p>
+          <p className="text-gray-500">{t("forgot.subtitle")}</p>
         </div>
 
         <form
@@ -80,12 +84,12 @@ export default function ForgotPasswordPage() {
           )}
 
           <p className="text-gray-500 text-sm mb-6 leading-relaxed">
-            ایمیل خود را وارد کنید تا لینک بازیابی رمز عبور برای شما ارسال شود.
+            {t("forgot.desc")}
           </p>
 
           <div className="mb-6">
             <label className="block text-sm font-bold text-dark mb-2">
-              ایمیل
+              {t("forgot.email")}
             </label>
             <input
               type="email"
@@ -104,16 +108,16 @@ export default function ForgotPasswordPage() {
             disabled={loading}
             className="w-full py-3 bg-cta text-white rounded-xl font-bold text-lg hover:bg-green-600 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
-            {loading ? "در حال ارسال..." : "ارسال لینک بازیابی"}
+            {loading ? t("forgot.loading") : t("forgot.submit")}
           </button>
 
           <p className="text-center text-sm text-gray-500 mt-6">
-            رمز خود را به یاد آوردید؟{" "}
+            {t("forgot.remember")}{" "}
             <Link
               href="/auth/login"
               className="text-primary font-bold hover:underline"
             >
-              ورود
+              {t("forgot.login")}
             </Link>
           </p>
         </form>

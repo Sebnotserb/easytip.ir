@@ -3,10 +3,11 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n";
 
-// ─── Format number with Persian locale ──────────
-function formatToman(value: number): string {
-  return value.toLocaleString("fa-IR");
+// ─── Format number based on locale ──────────
+function formatToman(value: number, locale: string = "fa"): string {
+  return value.toLocaleString(locale === "en" ? "en-US" : "fa-IR");
 }
 
 // ─── Animated Checkmark (GPU-accelerated) ───────
@@ -68,20 +69,22 @@ function FailIcon() {
 
 // ─── Success Content ────────────────────────────
 function SuccessContent({ amount }: { amount: number | null }) {
+  const { t, locale, dir } = useI18n();
+
   return (
-    <main className="min-h-screen bg-gradient-to-b from-secondary via-white to-secondary/30 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gradient-to-b from-secondary via-white to-secondary/30 flex items-center justify-center p-4" dir={dir}>
       <div className="text-center max-w-md w-full">
         {/* Animated checkmark */}
         <SuccessIcon />
 
         {/* Title */}
         <h1 className="stagger-fade-in delay-600 text-3xl font-extrabold text-dark mb-3">
-          ممنون از لطف و مهربونی شما
+          {t("thanks.successTitle")}
         </h1>
 
         {/* Subtitle */}
         <p className="stagger-fade-in delay-800 text-muted mb-8 leading-relaxed">
-          حمایت‌تون به تیم کافه رسید و کلی انرژی بهشون داد
+          {t("thanks.successSubtitle")}
         </p>
 
         {/* Receipt-style confirmation card */}
@@ -104,7 +107,7 @@ function SuccessContent({ amount }: { amount: number | null }) {
                   />
                 </svg>
               </div>
-              <span className="text-green-600 font-bold">پرداخت موفق</span>
+              <span className="text-green-600 font-bold">{t("thanks.paymentSuccess")}</span>
             </div>
           </div>
 
@@ -113,28 +116,28 @@ function SuccessContent({ amount }: { amount: number | null }) {
             {/* Amount row */}
             {amount && (
               <div className="flex justify-between items-center">
-                <span className="text-gray-500">مبلغ پرداختی</span>
+                <span className="text-gray-500">{t("thanks.amountPaid")}</span>
                 <span className="text-dark font-extrabold text-base">
-                  {formatToman(amount)} تومان
+                  {formatToman(amount, locale)} {t("tip.toman")}
                 </span>
               </div>
             )}
             <div className="flex justify-between items-center">
-              <span className="text-gray-500">وضعیت</span>
+              <span className="text-gray-500">{t("thanks.status")}</span>
               <span className="bg-green-50 text-green-600 px-3 py-1 rounded-full text-xs font-bold">
-                تایید شده ✓
+                {t("thanks.confirmed")}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-500">روش پرداخت</span>
-              <span className="text-dark font-bold">درگاه زرین‌پال</span>
+              <span className="text-gray-500">{t("thanks.paymentMethod")}</span>
+              <span className="text-dark font-bold">{t("thanks.zarinpal")}</span>
             </div>
           </div>
 
           {/* Bottom stamp */}
           <div className="mt-4 pt-4 border-t-2 border-dashed border-gray-200">
             <p className="text-xs text-gray-400">
-              رسید پرداخت در تاریخچه بانک شما ثبت شده است
+              {t("thanks.receiptNote")}
             </p>
           </div>
         </div>
@@ -145,7 +148,7 @@ function SuccessContent({ amount }: { amount: number | null }) {
             href="/"
             className="inline-block text-primary font-bold hover:underline transition-all"
           >
-            بازگشت به صفحه اصلی ←
+            {t("thanks.backHome")}
           </Link>
         </div>
       </div>
@@ -155,40 +158,42 @@ function SuccessContent({ amount }: { amount: number | null }) {
 
 // ─── Failed Content (completely different look) ─
 function FailedContent() {
+  const { t, dir } = useI18n();
+
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4" dir={dir}>
       <div className="max-w-sm w-full">
         {/* Compact error banner */}
         <div className="slide-up-bounce bg-white rounded-3xl shadow-lg overflow-hidden">
           {/* Red top bar */}
           <div className="bg-red-500 py-6 px-4 text-center">
             <FailIcon />
-            <h1 className="text-white text-xl font-bold">پرداخت ناموفق</h1>
+            <h1 className="text-white text-xl font-bold">{t("thanks.failTitle")}</h1>
           </div>
 
           {/* Body */}
           <div className="p-6">
             <p className="stagger-fade-in delay-400 text-muted text-sm text-center mb-5 leading-relaxed">
-              نگران نباشید — مبلغی از حساب شما کسر نشده.
+              {t("thanks.failSubtitle")}
               <br />
-              می‌تونید دوباره امتحان کنید.
+              {t("thanks.failRetry")}
             </p>
 
             {/* Possible reasons */}
             <div className="stagger-fade-in delay-600 bg-gray-50 rounded-2xl p-4 mb-6">
-              <p className="text-xs font-bold text-gray-600 mb-2">دلایل احتمالی:</p>
+              <p className="text-xs font-bold text-gray-600 mb-2">{t("thanks.failReasons")}</p>
               <ul className="text-xs text-gray-400 space-y-1.5 list-inside">
                 <li className="flex items-start gap-2">
                   <span className="text-red-300 mt-0.5">●</span>
-                  لغو توسط کاربر
+                  {t("thanks.failReason1")}
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-red-300 mt-0.5">●</span>
-                  اختلال در اتصال اینترنت
+                  {t("thanks.failReason2")}
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-red-300 mt-0.5">●</span>
-                  مشکل موقت درگاه بانکی
+                  {t("thanks.failReason3")}
                 </li>
               </ul>
             </div>
@@ -199,13 +204,13 @@ function FailedContent() {
                 onClick={() => window.history.back()}
                 className="w-full bg-red-500 text-white py-3 rounded-2xl font-bold hover:bg-red-600 transition-all"
               >
-                تلاش دوباره
+                {t("thanks.retry")}
               </button>
               <Link
                 href="/"
                 className="block text-center text-gray-400 text-sm hover:text-gray-600 transition-colors"
               >
-                بازگشت به صفحه اصلی
+                {t("thanks.backHomeSimple")}
               </Link>
             </div>
           </div>
@@ -217,6 +222,7 @@ function FailedContent() {
 
 // ─── Main Component with Router ─────────────────
 function ThankYouContent() {
+  const { t } = useI18n();
   const params = useSearchParams();
   const status = params.get("status");
   const amountParam = params.get("amount");
@@ -230,13 +236,15 @@ function ThankYouContent() {
 }
 
 export default function ThankYouPage() {
+  const { t } = useI18n();
+
   return (
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-secondary">
           <div className="text-center">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-400">در حال بررسی پرداخت...</p>
+            <p className="text-gray-400">{t("thanks.checking")}</p>
           </div>
         </div>
       }

@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@/lib/i18n";
 
 export default function FooterContact() {
   const [open, setOpen] = useState(false);
+  const { locale } = useI18n();
+  const isEn = locale === "en";
 
   return (
     <div className="mt-6 mb-4">
@@ -11,7 +14,7 @@ export default function FooterContact() {
         onClick={() => setOpen(!open)}
         className="inline-flex items-center gap-1.5 text-sm font-bold text-white hover:text-primary transition-colors"
       >
-        <span>تماس با ما</span>
+        <span>{isEn ? "Contact Us" : "تماس با ما"}</span>
         <svg
           className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
           fill="none"

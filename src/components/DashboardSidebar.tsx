@@ -88,7 +88,7 @@ export default function DashboardSidebar() {
       {/* ── Mobile Top Bar ── */}
       <div className="md:hidden fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 z-50 px-4 py-3 flex items-center justify-between">
         <Link href="/" className="text-xl font-extrabold text-dark">
-          مای‌<span className="text-primary">تیپ</span>
+          ایزی‌<span className="text-primary">تیپ</span>
         </Link>
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -127,7 +127,7 @@ export default function DashboardSidebar() {
           {/* Logo (desktop only) */}
           <div className="mb-6 hidden md:block">
             <Link href="/" className="text-2xl font-extrabold text-dark">
-              مای‌<span className="text-primary">تیپ</span>
+              ایزی‌<span className="text-primary">تیپ</span>
             </Link>
             <p className="text-xs text-muted mt-1">پنل مدیریت کافه</p>
           </div>

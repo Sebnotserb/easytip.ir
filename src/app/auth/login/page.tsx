@@ -3,9 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/lib/i18n";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t, locale, dir } = useI18n();
+  const isEn = locale === "en";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,7 +29,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "ایمیل یا رمز عبور اشتباهه");
+        setError(data.error || t("login.errorDefault"));
         return;
       }
 
@@ -38,23 +41,27 @@ export default function LoginPage() {
       }
       router.refresh();
     } catch {
-      setError("اتصال برقرار نشد — لطفاً اینترنت‌تون رو چک کنید");
+      setError(t("login.errorNetwork"));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-secondary to-white flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gradient-to-b from-secondary to-white flex items-center justify-center p-4" dir={dir}>
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
             <h1 className="text-4xl font-extrabold text-dark mb-2">
-              مای‌<span className="text-primary">تیپ</span>
+              {isEn ? (
+                <>Easy<span className="text-primary">Tip</span></>
+              ) : (
+                <>ایزی‌<span className="text-primary">تیپ</span></>
+              )}
             </h1>
           </Link>
-          <p className="text-muted text-sm">خوش اومدید — وارد پنل مدیریت بشید</p>
+          <p className="text-muted text-sm">{t("login.subtitle")}</p>
         </div>
 
         {/* Form */}
@@ -70,7 +77,7 @@ export default function LoginPage() {
 
           <div className="mb-5">
             <label className="block text-sm font-bold text-dark mb-2">
-              ایمیل
+              {t("login.email")}
             </label>
             <input
               type="email"
@@ -87,13 +94,13 @@ export default function LoginPage() {
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-bold text-dark">
-                رمز عبور
+                {t("login.password")}
               </label>
               <Link
                 href="/auth/forgot-password"
                 className="text-xs text-primary hover:underline"
               >
-                فراموش کردید؟
+                {t("login.forgot")}
               </Link>
             </div>
             <input
@@ -113,16 +120,16 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-3.5 bg-cta text-white rounded-xl font-bold text-lg hover:bg-cta-hover transition-all disabled:bg-gray-300 disabled:cursor-not-allowed btn-press shadow-sm"
           >
-            {loading ? "در حال ورود..." : "ورود به پنل"}
+            {loading ? t("login.loading") : t("login.submit")}
           </button>
 
           <p className="text-center text-sm text-muted mt-6">
-            هنوز ثبت‌نام نکردید؟{" "}
+            {t("login.noAccount")}{" "}
             <Link
               href="/auth/register"
               className="text-cta font-bold hover:underline"
             >
-              ثبت‌نام رایگان
+              {t("login.register")}
             </Link>
           </p>
         </form>

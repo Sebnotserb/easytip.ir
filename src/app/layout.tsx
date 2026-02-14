@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Vazirmatn } from "next/font/google";
 import { ToastProvider } from "@/components/Toast";
+import { LanguageProvider } from "@/lib/i18n";
 import "./globals.css";
 
 const vazirmatn = Vazirmatn({
@@ -39,7 +40,9 @@ export default function RootLayout({
         <meta name="enamad" content="51776869" />
       </head>
       <body className={`${vazirmatn.className} min-h-screen`}>
-        <ToastProvider>{children}</ToastProvider>
+        <LanguageProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

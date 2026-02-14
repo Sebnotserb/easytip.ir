@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import StarRating from "./StarRating";
+import LanguageToggle from "./LanguageToggle";
+import { useI18n } from "@/lib/i18n";
 
 const PRESET_AMOUNTS = [50_000, 150_000, 500_000, 1_000_000];
 const COMMISSION_RATE = 0.05;
@@ -23,6 +25,9 @@ export default function TipForm({
   cafeLogo,
   cafeInstagram,
 }: TipFormProps) {
+  const { t, locale, dir } = useI18n();
+  const isEn = locale === "en";
+
   const [amount, setAmount] = useState<number>(0);
   const [customAmount, setCustomAmount] = useState("");
   const [isCustom, setIsCustom] = useState(false);
@@ -73,7 +78,7 @@ export default function TipForm({
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "مشکلی پیش اومد — لطفاً دوباره امتحان کنید");
+        setError(data.error || t("tip.errorDefault"));
         return;
       }
 
@@ -81,16 +86,21 @@ export default function TipForm({
         window.location.href = data.paymentUrl;
       }
     } catch {
-      setError("اتصال برقرار نشد — لطفاً اینترنت‌تون رو چک کنید");
+      setError(t("tip.errorNetwork"));
     } finally {
       setLoading(false);
     }
   };
 
-  const fmt = (n: number) => n.toLocaleString("fa-IR");
+  const fmt = (n: number) => n.toLocaleString(isEn ? "en-US" : "fa-IR");
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-md mx-auto" dir={dir}>
+      {/* ── Language Toggle ── */}
+      <div className="flex justify-center mb-4">
+        <LanguageToggle />
+      </div>
+
       {/* ── Café Branding ── */}
       <div className="text-center mb-6">
         <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden shadow-card border-2 border-white">
@@ -103,13 +113,13 @@ export default function TipForm({
         </div>
         <h1 className="text-2xl font-extrabold text-dark mb-1">{cafeName}</h1>
         <p className="text-muted text-sm leading-relaxed">
-          {cafeMessage || "خوشحال می‌شیم حمایتمون کنید 💚"}
+          {isEn ? t("tip.defaultMessage") : (cafeMessage || t("tip.defaultMessage"))}
         </p>
       </div>
 
       {/* ═══ AMOUNT SELECTION (Primary action — first!) ═══ */}
       <div className="bg-white rounded-3xl p-5 shadow-card border border-gray-100 mb-4">
-        <p className="text-sm font-bold text-dark mb-3">مبلغ انعام رو انتخاب کنید</p>
+        <p className="text-sm font-bold text-dark mb-3">{t("tip.selectAmount")}</p>
         <div className="grid grid-cols-2 gap-3 mb-3">
           {PRESET_AMOUNTS.map((val) => (
             <button
@@ -124,7 +134,7 @@ export default function TipForm({
             >
               {fmt(val)}
               {val === 1_000_000 && (
-                <span className="block text-xs font-normal mt-0.5 opacity-70">تومان</span>
+                <span className="block text-xs font-normal mt-0.5 opacity-70">{t("tip.toman")}</span>
               )}
             </button>
           ))}
@@ -134,7 +144,7 @@ export default function TipForm({
         <input
           type="number"
           inputMode="numeric"
-          placeholder="یا مبلغ دلخواه وارد کنید..."
+          placeholder={t("tip.customPlaceholder")}
           value={customAmount}
           onChange={handleCustomChange}
           min={MIN_TIP}
@@ -151,18 +161,18 @@ export default function TipForm({
       {selectedAmount > 0 && (
         <div className="bg-white rounded-2xl p-4 mb-4 animate-fade-in-up shadow-card-sm border border-gray-100">
           <div className="flex justify-between mb-2 text-sm">
-            <span className="text-muted">مبلغ انعام</span>
-            <span className="font-bold text-dark">{fmt(selectedAmount)} تومان</span>
+            <span className="text-muted">{t("tip.tipAmount")}</span>
+            <span className="font-bold text-dark">{fmt(selectedAmount)} {t("tip.toman")}</span>
           </div>
           <div className="flex justify-between mb-2 text-sm">
-            <span className="text-muted">کارمزد سرویس (۵٪)</span>
-            <span className="text-muted">{fmt(commission)} تومان</span>
+            <span className="text-muted">{t("tip.serviceFee")}</span>
+            <span className="text-muted">{fmt(commission)} {t("tip.toman")}</span>
           </div>
           <hr className="my-2.5 border-gray-100" />
           <div className="flex justify-between">
-            <span className="font-bold text-dark">جمع کل</span>
+            <span className="font-bold text-dark">{t("tip.total")}</span>
             <span className="font-extrabold text-cta text-lg">
-              {fmt(total)} تومان
+              {fmt(total)} {t("tip.toman")}
             </span>
           </div>
         </div>
@@ -187,9 +197,9 @@ export default function TipForm({
         }`}
       >
         {loading ? (
-          <span className="animate-pulse-soft">در حال اتصال به درگاه...</span>
+          <span className="animate-pulse-soft">{t("tip.paying")}</span>
         ) : (
-          "پرداخت انعام"
+          t("tip.payButton")
         )}
       </button>
 
@@ -198,7 +208,7 @@ export default function TipForm({
         <svg className="w-3.5 h-3.5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
         </svg>
-        <span className="text-xs text-muted">پرداخت امن از طریق درگاه زرین‌پال</span>
+        <span className="text-xs text-muted">{t("tip.securePayment")}</span>
       </div>
 
       {/* ═══ OPTIONAL SECTION (expandable) ═══ */}
@@ -208,7 +218,7 @@ export default function TipForm({
           onClick={() => setShowExtras(!showExtras)}
           className="w-full flex items-center justify-between text-sm text-muted hover:text-dark transition-colors py-1"
         >
-          <span>امتیاز و نظر بدید (اختیاری)</span>
+          <span>{t("tip.rateOptional")}</span>
           <svg
             className={`w-4 h-4 transition-transform duration-200 ${showExtras ? "rotate-180" : ""}`}
             fill="none"
@@ -224,21 +234,21 @@ export default function TipForm({
           <div className="mt-4 space-y-4 animate-fade-in-up">
             {/* Star Rating */}
             <div className="text-center">
-              <p className="text-xs text-muted mb-2">تجربه‌تون چطور بود؟</p>
+              <p className="text-xs text-muted mb-2">{t("tip.howWas")}</p>
               <StarRating value={rating} onChange={setRating} />
             </div>
 
             {/* Name & Comment */}
             <input
               type="text"
-              placeholder="اسمتون (اختیاری)"
+              placeholder={t("tip.namePlaceholder")}
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               maxLength={50}
               className="w-full p-3 rounded-2xl border-2 border-gray-200 focus:border-primary transition-all text-sm"
             />
             <textarea
-              placeholder="یه نظر یا پیشنهاد دارید؟ (اختیاری)"
+              placeholder={t("tip.commentPlaceholder")}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               maxLength={500}
@@ -267,7 +277,7 @@ export default function TipForm({
             @{cafeInstagram}
           </span>
           <span className="text-xs text-gray-400">
-            را در اینستاگرام دنبال کنید
+            {t("tip.followOn")}
           </span>
         </a>
       )}
