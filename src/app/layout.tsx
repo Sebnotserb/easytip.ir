@@ -35,6 +35,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fa" dir="rtl" className={vazirmatn.variable}>
+      <head>
+        <meta name="enamad" content="51776869" />
+      </head>
       <body className={`${vazirmatn.className} min-h-screen`}>
         <ToastProvider>{children}</ToastProvider>
       </body>
