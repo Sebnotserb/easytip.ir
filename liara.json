@@ -3,11 +3,10 @@
   "node": {
     "version": "20"
   },
-  "app": "easytip",
   "port": 3000,
   "scripts": {
-    "build": "npx prisma generate && npm run build",
-    "start": "npm run start"
+    "build": "npx prisma generate && npx next build",
+    "start": "npx next start -p 3000"
   },
   "disks": [
     {
