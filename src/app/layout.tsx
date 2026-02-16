@@ -43,6 +43,11 @@ export default function RootLayout({
         <LanguageProvider>
           <ToastProvider>{children}</ToastProvider>
         </LanguageProvider>
+        <div style={{ position: "absolute", overflow: "hidden", width: 0, height: 0 }} aria-hidden="true">
+          <a referrerPolicy="origin" target="_blank" href="https://trustseal.enamad.ir/?id=707249&Code=cAnUJyqX8J5vxj2Oc25ZyASEopJc8q4Z">
+            <img referrerPolicy="origin" src="https://trustseal.enamad.ir/logo.aspx?id=707249&Code=cAnUJyqX8J5vxj2Oc25ZyASEopJc8q4Z" alt="enamad" style={{ width: 0, height: 0 }} code="cAnUJyqX8J5vxj2Oc25ZyASEopJc8q4Z" />
+          </a>
+        </div>
       </body>
     </html>
   );
