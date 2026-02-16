@@ -405,7 +405,7 @@ export default function LandingPage() {
                 src="https://trustseal.enamad.ir/logo.aspx?id=707249&Code=cAnUJyqX8J5vxj2Oc25ZyASEopJc8q4Z"
                 alt="نماد اعتماد الکترونیکی"
                 className="w-16 h-16"
-                code="cAnUJyqX8J5vxj2Oc25ZyASEopJc8q4Z"
+                data-code="cAnUJyqX8J5vxj2Oc25ZyASEopJc8q4Z"
               />
             </a>
           </div>
