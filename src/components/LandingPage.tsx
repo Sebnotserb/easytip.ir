@@ -390,6 +390,26 @@ export default function LandingPage() {
             </Link>
           </div>
           <hr className="my-6 border-gray-700" />
+
+          {/* Enamad Trust Seal */}
+          <div className="flex justify-center mb-4">
+            <a
+              referrerPolicy="origin"
+              target="_blank"
+              href="https://trustseal.enamad.ir/?id=707249&Code=cAnUJyqX8J5vxj2Oc25ZyASEopJc8q4Z"
+              className="inline-block opacity-80 hover:opacity-100 transition-opacity"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                referrerPolicy="origin"
+                src="https://trustseal.enamad.ir/logo.aspx?id=707249&Code=cAnUJyqX8J5vxj2Oc25ZyASEopJc8q4Z"
+                alt="نماد اعتماد الکترونیکی"
+                className="w-16 h-16"
+                code="cAnUJyqX8J5vxj2Oc25ZyASEopJc8q4Z"
+              />
+            </a>
+          </div>
+
           <p className="text-gray-500 text-xs">{t("footer.copy")}</p>
         </div>
       </footer>
