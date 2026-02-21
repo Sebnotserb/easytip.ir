@@ -26,15 +26,19 @@ export function formatDateShort(date: Date): string {
 
 // ─── Slug Generation ─────────────────────────────
 
-/** Generate URL-safe slug from Persian or Latin text */
+/** Generate URL-safe Latin-only slug using random ID + optional transliterated name */
 export function generateSlug(name: string): string {
-  return name
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+  const latin = name
     .trim()
     .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
     .replace(/\s+/g, "-")
-    .replace(/[^\w\u0600-\u06FF-]/g, "") // keep Persian chars, alphanumeric, hyphens
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
+
+  return latin ? `${latin}-${id}` : `cafe-${id}`;
 }
 
 // ─── Financial Calculations ──────────────────────

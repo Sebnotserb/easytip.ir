@@ -78,13 +78,8 @@ export async function POST(request: Request) {
       }
     }
 
-    // ── Generate unique slug ──
-    let slug = generateSlug(cafeName);
-    if (!slug) slug = `cafe-${Date.now().toString(36)}`;
-    const existingSlug = await prisma.cafe.findUnique({ where: { slug } });
-    if (existingSlug) {
-      slug = `${slug}-${Date.now().toString(36)}`;
-    }
+    // ── Generate unique slug (always Latin, always unique) ──
+    const slug = generateSlug(cafeName);
 
     // ── Create user + café in a transaction ──
     const hashedPassword = await hashPassword(password);
