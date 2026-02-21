@@ -34,6 +34,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "hero.title3": "کنید.",
     "hero.subtitle": "یه راه‌حل مدرن و مبتنی بر QR کد که مشتری‌ها بدون دردسر قدردانی‌شون رو نشون بدن — و شما تا ۸۰٪ رشد در دریافت انعام رو از همون لحظه تجربه کنید.",
     "hero.cta": "حساب رایگان بسازید",
+    "hero.demo": "مشاهده دمو",
     "hero.secondary": "چطور کار می‌کنه؟",
 
     // ── Landing: Social Proof ──
@@ -204,6 +205,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "hero.title3": ".",
     "hero.subtitle": "A modern, QR-based solution for customers to show their appreciation effortlessly — and watch your tips grow by up to 80% from day one.",
     "hero.cta": "Create Free Account",
+    "hero.demo": "Try Demo",
     "hero.secondary": "How does it work?",
 
     // ── Landing: Social Proof ──

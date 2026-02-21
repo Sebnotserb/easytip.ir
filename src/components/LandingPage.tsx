@@ -63,10 +63,10 @@ export default function LandingPage() {
             </p>
             <div className={`flex flex-col sm:flex-row gap-3 justify-center ${isEn ? "md:justify-start" : "md:justify-start"}`}>
               <Link
-                href="/auth/register"
+                href="/demo"
                 className="bg-cta text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-cta-hover transition-all shadow-lg shadow-cta/20 hover:shadow-xl btn-press"
               >
-                {t("hero.cta")}
+                {t("hero.demo")}
               </Link>
               <Link
                 href="#how-it-works"

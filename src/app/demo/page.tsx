@@ -1,0 +1,240 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import StarRating from "@/components/StarRating";
+import LanguageToggle from "@/components/LanguageToggle";
+import { useI18n } from "@/lib/i18n";
+
+const PRESET_AMOUNTS = [50_000, 150_000, 500_000, 1_000_000];
+const COMMISSION_RATE = 0.05;
+const MIN_TIP = 1_000;
+const MAX_TIP = 5_000_000;
+
+export default function DemoTipPage() {
+  const { t, locale, dir } = useI18n();
+  const isEn = locale === "en";
+  const router = useRouter();
+
+  const [amount, setAmount] = useState<number>(0);
+  const [customAmount, setCustomAmount] = useState("");
+  const [isCustom, setIsCustom] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [nickname, setNickname] = useState("");
+  const [comment, setComment] = useState("");
+  const [showExtras, setShowExtras] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const selectedAmount = isCustom ? parseInt(customAmount) || 0 : amount;
+  const commission = Math.ceil(selectedAmount * COMMISSION_RATE);
+  const total = selectedAmount + commission;
+  const isValid = selectedAmount >= MIN_TIP && selectedAmount <= MAX_TIP;
+
+  const handlePresetClick = (val: number) => {
+    setAmount(val);
+    setIsCustom(false);
+    setCustomAmount("");
+  };
+
+  const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomAmount(e.target.value);
+    setIsCustom(true);
+    setAmount(0);
+  };
+
+  const handleSubmit = () => {
+    if (!isValid) return;
+    setLoading(true);
+    setTimeout(() => {
+      router.push(`/demo/success?amount=${selectedAmount}`);
+    }, 1500);
+  };
+
+  const fmt = (n: number) => n.toLocaleString(isEn ? "en-US" : "fa-IR");
+
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-secondary to-white py-8 px-4">
+      <div className="max-w-md mx-auto" dir={dir}>
+        {/* Demo Banner */}
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 mb-4 text-center">
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-lg">🎯</span>
+            <p className="text-sm font-bold text-amber-700">
+              {isEn ? "This is a demo — no real payment" : "این یک نسخه نمایشی است — پرداخت واقعی انجام نمی‌شود"}
+            </p>
+          </div>
+        </div>
+
+        {/* Language Toggle */}
+        <div className="flex justify-center mb-4">
+          <LanguageToggle />
+        </div>
+
+        {/* Café Branding */}
+        <div className="text-center mb-6">
+          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden shadow-card border-2 border-white">
+            <span className="text-4xl">☕</span>
+          </div>
+          <h1 className="text-2xl font-extrabold text-dark mb-1">
+            {isEn ? "EasyTip Café" : "کافه ایزی‌تیپ"}
+          </h1>
+          <p className="text-muted text-sm leading-relaxed">
+            {t("tip.defaultMessage")}
+          </p>
+        </div>
+
+        {/* Amount Selection */}
+        <div className="bg-white rounded-3xl p-5 shadow-card border border-gray-100 mb-4">
+          <p className="text-sm font-bold text-dark mb-3">{t("tip.selectAmount")}</p>
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            {PRESET_AMOUNTS.map((val) => (
+              <button
+                key={val}
+                type="button"
+                onClick={() => handlePresetClick(val)}
+                className={`py-4 rounded-2xl font-bold text-lg transition-all btn-press ${
+                  amount === val && !isCustom
+                    ? "bg-cta text-white shadow-lg shadow-cta/25 scale-[1.03]"
+                    : "bg-gray-50 text-dark hover:bg-secondary border border-gray-100"
+                }`}
+              >
+                {fmt(val)}
+                {val === 1_000_000 && (
+                  <span className="block text-xs font-normal mt-0.5 opacity-70">{t("tip.toman")}</span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <input
+            type="number"
+            inputMode="numeric"
+            placeholder={t("tip.customPlaceholder")}
+            value={customAmount}
+            onChange={handleCustomChange}
+            min={MIN_TIP}
+            max={MAX_TIP}
+            className={`w-full p-3.5 rounded-2xl border-2 text-center font-bold transition-all ${
+              isCustom && customAmount
+                ? "border-cta bg-secondary text-dark"
+                : "border-gray-200 text-muted"
+            }`}
+          />
+        </div>
+
+        {/* Fee Breakdown */}
+        {selectedAmount > 0 && (
+          <div className="bg-white rounded-2xl p-4 mb-4 animate-fade-in-up shadow-card-sm border border-gray-100">
+            <div className="flex justify-between mb-2 text-sm">
+              <span className="text-muted">{t("tip.tipAmount")}</span>
+              <span className="font-bold text-dark">{fmt(selectedAmount)} {t("tip.toman")}</span>
+            </div>
+            <div className="flex justify-between mb-2 text-sm">
+              <span className="text-muted">{t("tip.serviceFee")}</span>
+              <span className="text-muted">{fmt(commission)} {t("tip.toman")}</span>
+            </div>
+            <hr className="my-2.5 border-gray-100" />
+            <div className="flex justify-between">
+              <span className="font-bold text-dark">{t("tip.total")}</span>
+              <span className="font-extrabold text-cta text-lg">
+                {fmt(total)} {t("tip.toman")}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={!isValid || loading}
+          className={`w-full py-4 rounded-2xl text-white font-bold text-lg transition-all btn-press ${
+            isValid && !loading
+              ? "bg-cta hover:bg-cta-hover shadow-lg shadow-cta/20 hover:shadow-xl"
+              : "bg-gray-300 cursor-not-allowed"
+          }`}
+        >
+          {loading ? (
+            <span className="animate-pulse-soft">{t("tip.paying")}</span>
+          ) : (
+            t("tip.payButton")
+          )}
+        </button>
+
+        {/* Trust Badge */}
+        <div className="flex items-center justify-center gap-1.5 mt-3 mb-2">
+          <svg className="w-3.5 h-3.5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          <span className="text-xs text-muted">{t("tip.securePayment")}</span>
+        </div>
+
+        {/* Optional Section */}
+        <div className="mt-5 border-t border-gray-100 pt-4">
+          <button
+            type="button"
+            onClick={() => setShowExtras(!showExtras)}
+            className="w-full flex items-center justify-between text-sm text-muted hover:text-dark transition-colors py-1"
+          >
+            <span>{t("tip.rateOptional")}</span>
+            <svg
+              className={`w-4 h-4 transition-transform duration-200 ${showExtras ? "rotate-180" : ""}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {showExtras && (
+            <div className="mt-4 space-y-4 animate-fade-in-up">
+              <div className="text-center">
+                <p className="text-xs text-muted mb-2">{t("tip.howWas")}</p>
+                <StarRating value={rating} onChange={setRating} />
+              </div>
+              <input
+                type="text"
+                placeholder={t("tip.namePlaceholder")}
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                maxLength={50}
+                className="w-full p-3 rounded-2xl border-2 border-gray-200 focus:border-primary transition-all text-sm"
+              />
+              <textarea
+                placeholder={t("tip.commentPlaceholder")}
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                maxLength={500}
+                rows={2}
+                className="w-full p-3 rounded-2xl border-2 border-gray-200 focus:border-primary transition-all resize-none text-sm"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Instagram Link (demo) */}
+        <a
+          href="https://instagram.com/easytip.ir"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 mt-5 py-3 px-4 rounded-2xl bg-gradient-to-l from-purple-50 to-pink-50 border border-purple-100 hover:from-purple-100 hover:to-pink-100 transition-all group"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/instagram.svg"
+            alt="Instagram"
+            className="w-5 h-5 group-hover:scale-110 transition-transform"
+          />
+          <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors" dir="ltr">
+            @easytip.ir
+          </span>
+          <span className="text-xs text-gray-400">
+            {t("tip.followOn")}
+          </span>
+        </a>
+      </div>
+    </main>
+  );
+}
