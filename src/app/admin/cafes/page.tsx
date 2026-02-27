@@ -45,6 +45,9 @@ export default async function AdminCafesPage() {
                 <th className="px-6 py-4 text-right text-sm font-bold text-gray-600">
                   وضعیت
                 </th>
+                <th className="px-6 py-4 text-right text-sm font-bold text-gray-600">
+                  کارت چاپی
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -88,6 +91,24 @@ export default async function AdminCafesPage() {
                     >
                       {cafe.isActive ? "فعال" : "غیرفعال"}
                     </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={`/api/card/${cafe.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                      >
+                        پیش‌نمایش
+                      </a>
+                      <a
+                        href={`/api/card/${cafe.slug}?download=true`}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-dark text-white hover:bg-slate-800 transition-colors"
+                      >
+                        دانلود A5
+                      </a>
+                    </div>
                   </td>
                 </tr>
               ))}

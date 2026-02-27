@@ -60,13 +60,22 @@ export default async function QRPage() {
           </p>
 
           {/* Download Button */}
-          <a
-            href={`/api/qr/${cafe.slug}?download=true`}
-            download={`qr-${cafe.slug}.png`}
-            className="inline-block bg-cta text-white px-8 py-3 rounded-xl font-bold hover:bg-green-600 transition-all"
-          >
-            دانلود QR کد 📥
-          </a>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href={`/api/qr/${cafe.slug}?download=true`}
+              download={`qr-${cafe.slug}.png`}
+              className="inline-block bg-cta text-white px-6 py-3 rounded-xl font-bold hover:bg-green-600 transition-all"
+            >
+              دانلود QR کد 📥
+            </a>
+            <a
+              href={`/api/card/${cafe.slug}?download=true`}
+              download={`a5-card-${cafe.slug}.svg`}
+              className="inline-block bg-dark text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 transition-all"
+            >
+              دانلود کارت A5 🪪
+            </a>
+          </div>
 
           {/* Print tip */}
           <p className="text-xs text-gray-400 mt-4">
