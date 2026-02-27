@@ -9,7 +9,7 @@ export const runtime = "nodejs";
  * Generate a QR code PNG image for a café's tipping page.
  */
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: { slug: string } }
 ) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -29,11 +29,18 @@ export async function GET(
 
     // Convert Buffer to Uint8Array for Response compatibility
     const uint8 = new Uint8Array(qrBuffer);
+    const isDownload =
+      new URL(request.url).searchParams.get("download") === "true";
 
     return new Response(uint8, {
       headers: {
         "Content-Type": "image/png",
         "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+        ...(isDownload
+          ? {
+              "Content-Disposition": `attachment; filename=\"qr-${params.slug}.png\"`,
+            }
+          : {}),
       },
     });
   } catch (error) {

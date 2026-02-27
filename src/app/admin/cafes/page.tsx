@@ -1,9 +1,16 @@
+import Link from "next/link";
 import prisma from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 /** Admin: list all registered cafés with their stats */
-export default async function AdminCafesPage() {
+export default async function AdminCafesPage({
+  searchParams,
+}: {
+  searchParams?: { q?: string };
+}) {
+  const query = (searchParams?.q || "").trim();
+
   const cafes = await prisma.cafe.findMany({
     include: {
       owner: { select: { name: true, email: true } },
@@ -12,13 +19,46 @@ export default async function AdminCafesPage() {
     orderBy: { createdAt: "desc" },
   });
 
+  const normalizedQuery = query.toLowerCase();
+  const filteredCafes = !normalizedQuery
+    ? cafes
+    : cafes.filter((cafe) => {
+        const fields = [
+          cafe.name,
+          cafe.slug,
+          cafe.owner?.name || "",
+          cafe.owner?.email || "",
+        ];
+        return fields.some((field) =>
+          field.toLowerCase().includes(normalizedQuery)
+        );
+      });
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-dark">کافه‌ها</h1>
-        <span className="text-sm text-gray-500 bg-secondary px-3 py-1 rounded-lg">
-          {cafes.length} کافه
-        </span>
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-dark">کافه‌ها</h1>
+          <span className="text-sm text-gray-500 bg-secondary px-3 py-1 rounded-lg">
+            {filteredCafes.length} / {cafes.length} کافه
+          </span>
+        </div>
+        <form method="GET" className="w-full md:w-auto md:min-w-[360px]">
+          <div className="relative">
+            <input
+              name="q"
+              defaultValue={query}
+              placeholder="جستجو بر اساس نام کافه، اسلاگ، نام یا ایمیل مالک..."
+              className="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-sm text-dark focus:border-primary transition-all"
+            />
+            <button
+              type="submit"
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-lg bg-dark px-3 py-1.5 text-xs font-bold text-white hover:bg-slate-800 transition-colors"
+            >
+              جستجو
+            </button>
+          </div>
+        </form>
       </div>
 
       {/* Desktop Table */}
@@ -27,6 +67,9 @@ export default async function AdminCafesPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
+                <th className="px-4 py-4 text-right text-sm font-bold text-gray-600">
+                  انتخاب
+                </th>
                 <th className="px-6 py-4 text-right text-sm font-bold text-gray-600">
                   نام کافه
                 </th>
@@ -46,16 +89,26 @@ export default async function AdminCafesPage() {
                   وضعیت
                 </th>
                 <th className="px-6 py-4 text-right text-sm font-bold text-gray-600">
-                  کارت چاپی
+                  QR کد
+                </th>
+                <th className="px-6 py-4 text-right text-sm font-bold text-gray-600">
+                  اطلاعات
                 </th>
               </tr>
             </thead>
             <tbody>
-              {cafes.map((cafe) => (
+              {filteredCafes.map((cafe) => (
                 <tr
                   key={cafe.id}
                   className="border-t border-gray-100 hover:bg-gray-50 transition-colors"
                 >
+                  <td className="px-4 py-4">
+                    <input
+                      type="checkbox"
+                      aria-label={`انتخاب ${cafe.name}`}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                  </td>
                   <td className="px-6 py-4">
                     <div>
                       <p className="font-bold text-dark">{cafe.name}</p>
@@ -95,29 +148,37 @@ export default async function AdminCafesPage() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <a
-                        href={`/api/card/${cafe.slug}`}
+                        href={`/api/qr/${cafe.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
                       >
-                        پیش‌نمایش
+                        پیش‌نمایش QR
                       </a>
                       <a
-                        href={`/api/card/${cafe.slug}?download=true`}
+                        href={`/api/qr/${cafe.slug}?download=true`}
                         className="text-xs px-3 py-1.5 rounded-lg bg-dark text-white hover:bg-slate-800 transition-colors"
                       >
-                        دانلود A5
+                        دانلود QR
                       </a>
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <Link
+                      href={`/admin/cafes/${cafe.id}`}
+                      className="inline-block text-xs px-3 py-1.5 rounded-lg bg-primary text-dark font-bold hover:bg-primary-dark hover:text-white transition-colors"
+                    >
+                      مشاهده اطلاعات
+                    </Link>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        {cafes.length === 0 && (
+        {filteredCafes.length === 0 && (
           <p className="text-center text-gray-400 py-12">
-            هنوز کافه‌ای ثبت‌نام نکرده
+            {query ? "نتیجه‌ای برای این جستجو پیدا نشد" : "هنوز کافه‌ای ثبت‌نام نکرده"}
           </p>
         )}
       </div>
