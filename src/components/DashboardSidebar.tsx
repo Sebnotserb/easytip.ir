@@ -42,6 +42,16 @@ const menuItems = [
     ),
   },
   {
+    href: "/dashboard/productivity",
+    label: "رشد روزانه",
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l4.5 4.5L20.25 6.75" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 6.75h6.75v6.75H3zM14.25 14.25H21v6.75h-6.75z" />
+      </svg>
+    ),
+  },
+  {
     href: "/dashboard/tickets",
     label: "پشتیبانی",
     icon: (
