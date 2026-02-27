@@ -52,6 +52,9 @@ export default function LandingPage() {
               <br />
               <span className="text-primary">{t("hero.title2")}</span>{isEn ? "." : ` ${t("hero.title3")}`}
             </h1>
+            <p className="text-sm md:text-base font-bold text-primary mb-4 tracking-wide">
+              {t("hero.motto")}
+            </p>
             <p className={`text-lg text-muted mb-8 max-w-lg leading-relaxed ${isEn ? "md:mx-0 mx-auto" : "md:mx-0 mx-auto"}`}>
               {isEn ? (
                 t("hero.subtitle")
