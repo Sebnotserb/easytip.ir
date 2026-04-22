@@ -1,14 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Vazirmatn } from "next/font/google";
 import { ToastProvider } from "@/components/Toast";
 import { LanguageProvider } from "@/lib/i18n";
 import "./globals.css";
-
-const vazirmatn = Vazirmatn({
-  subsets: ["arabic"],
-  display: "swap",
-  variable: "--font-vazir",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -35,11 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fa" dir="rtl" className={vazirmatn.variable}>
+    <html lang="fa" dir="rtl">
       <head>
         <meta name="enamad" content="51776869" />
       </head>
-      <body className={`${vazirmatn.className} min-h-screen`}>
+      <body className="min-h-screen">
         <LanguageProvider>
           <ToastProvider>{children}</ToastProvider>
         </LanguageProvider>
