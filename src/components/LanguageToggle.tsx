@@ -10,7 +10,7 @@ export default function LanguageToggle() {
       type="button"
       onClick={() => setLocale(locale === "fa" ? "en" : "fa")}
       className="flex items-center bg-gray-100 rounded-full p-0.5 text-xs font-bold transition-all hover:bg-gray-200 relative overflow-hidden"
-      style={{ minWidth: "72px", height: "30px" }}
+      style={{ minWidth: "72px", height: "30px", direction: "ltr" }}
       aria-label="Toggle language"
     >
       {/* Sliding indicator */}
