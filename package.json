@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "PRISMA_ENGINES_MIRROR=https://prisma.storage.iran.liara.space npx prisma generate && next build",
+    "build": "PRISMA_ENGINES_MIRROR=https://prisma.storage.iran.liara.space PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 npx prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@fontsource/vazirmatn": "^5.2.8",
-    "@prisma/client": "^5.14.0",
+    "@prisma/client": "^6.17.1",
     "bcryptjs": "^2.4.3",
     "jose": "^5.3.0",
     "next": "^14.2.0",
