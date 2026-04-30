@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "export PRISMA_ENGINES_MIRROR=https://prisma.storage.iran.liara.space npx prisma generate && nest build",
+    "build": "PRISMA_ENGINES_MIRROR=https://prisma.storage.iran.liara.space npx prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
