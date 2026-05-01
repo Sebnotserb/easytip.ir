@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth";
 
@@ -99,20 +100,20 @@ async function getOrCreateState(userId: string) {
         entity: "owner_productivity",
         entityId: userId,
         userId,
-        data: initial,
+        data: initial as unknown as Prisma.InputJsonValue,
       },
     });
     return { row: created, state: initial };
   }
 
-  const raw = (latest.data || {}) as ProductivityState;
+  const raw = (latest.data || {}) as unknown as ProductivityState;
   const normalized =
     raw && Array.isArray(raw.tasks) ? normalizeForToday(raw) : createDefaultState();
 
   if (JSON.stringify(raw) !== JSON.stringify(normalized)) {
     const updated = await prisma.auditLog.update({
       where: { id: latest.id },
-      data: { data: normalized },
+      data: { data: normalized as unknown as Prisma.InputJsonValue },
     });
     return { row: updated, state: normalized };
   }
@@ -191,7 +192,7 @@ export async function POST(request: Request) {
 
   const updated = await prisma.auditLog.update({
     where: { id: row.id },
-    data: { data: next },
+    data: { data: next as unknown as Prisma.InputJsonValue },
   });
 
   return NextResponse.json({
