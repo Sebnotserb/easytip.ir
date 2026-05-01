@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ایزی‌تیپ">
+  <title>ایزی‌تیپ</title>
+  <defs>
+    <linearGradient id="etIconBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A8D4F"/>
+      <stop offset="100%" stop-color="#6BCF9C"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Brand tile -->
+  <rect width="512" height="512" rx="112" ry="112" fill="url(#etIconBg)"/>
+
+  <!-- Bowl of ت — slightly thicker for legibility at small sizes -->
+  <path d="M 112 264 C 112 404, 400 404, 400 264"
+        stroke="#FFFFFF" stroke-width="72"
+        stroke-linecap="round" fill="none"/>
+
+  <!-- Two dots — solid white for max contrast at 16/32px -->
+  <circle cx="200" cy="152" r="48" fill="#FFFFFF"/>
+  <circle cx="312" cy="152" r="48" fill="#FFFFFF"/>
+</svg>
